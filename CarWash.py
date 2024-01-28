@@ -6,18 +6,6 @@ import data_structures
 import file_manager
 from datetime import time
 import datetime
-import os
-import sys
-
-def resource_path(relative_path):
-    """ Get absolute path to resource, works for dev and for PyInstaller """
-    try:
-        # PyInstaller creates a temp folder and stores path in _MEIPASS
-        base_path = sys._MEIPASS2
-    except Exception:
-        base_path = os.path.abspath(".")
-
-    return os.path.join(base_path, relative_path)
 
 
 def adjust_service_string(service, service_list):
@@ -116,7 +104,7 @@ class ScrollableServiceFrame(ctk.CTkScrollableFrame):
 
 # create a new window (top level)
 class ServiceConfigWindow(ctk.CTkToplevel):
-    def __init__(self, master, *args, **kwargs):
+    def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         # self.geometry("400x300")
         self.title("Налаштування послуг")
@@ -386,7 +374,7 @@ class ServicesConfigFrame(ctk.CTkScrollableFrame):
 
 
 class EmployeeConfigWindow(ctk.CTkToplevel):
-    def __init__(self, master, *args, **kwargs):
+    def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         # self.geometry("400x300")
         self.title("Налаштування послуг")
@@ -446,7 +434,7 @@ class EmployeesConfigFrame(ctk.CTkScrollableFrame):
     def add_item(self, item):
 
         edit_frame = ctk.CTkFrame(self)
-        #print(item.name)
+        # print(item.name)
 
         name_entry = ctk.CTkEntry(edit_frame, width=150, justify=tkinter.CENTER)
         name_entry.insert(0, item.name)
@@ -621,8 +609,7 @@ class App(ctk.CTk):
 
         self.style = ttk.Style(self)
 
-        self.tk.call("source", resource_path("forest-light.tcl"))
-        self.tk.call("source", resource_path("forest-dark.tcl"))
+        self.tk.call("source", "forest-dark.tcl")
 
         self.style.theme_use("forest-dark")
 
@@ -630,7 +617,7 @@ class App(ctk.CTk):
         self.grid_rowconfigure(1, weight=1)
         self.columnconfigure(2, weight=1)
 
-        self.file_manager = file_manager.FileManager(resource_path('services.txt'), resource_path('employees.txt'))
+        self.file_manager = file_manager.FileManager('services.txt', 'employees.txt')
 
         self.employee_list = self.file_manager.read_employees()
         self.service_list = self.file_manager.read_services()
@@ -810,7 +797,7 @@ class App(ctk.CTk):
         delete_button = ctk.CTkButton(self.add_order_frame, text="Видалити", width=100, height=24, fg_color="#ff3300",
                                       command=lambda: self.delete_order(index, delete_button))
         delete_button.grid(row=4, column=0, padx=(15, 5), pady=(0, 5), sticky="ns")
-        self.add_button.configure(text="Змінити", command=lambda: self.edit_order(order, index, delete_button),
+        self.add_button.configure(text="Змінити", command=lambda: self.edit_order(index, delete_button),
                                   fg_color="#007399")
 
     def delete_order(self, index, button):
@@ -821,7 +808,7 @@ class App(ctk.CTk):
         self.fill_orders_treeview()
         self.clear_add_order_frame()
 
-    def edit_order(self, order, index, button):
+    def edit_order(self, index, button):
 
         # print("changes saved")
         result = self.validate_order()
@@ -1064,7 +1051,7 @@ class App(ctk.CTk):
 
 
 class ProfitWindow(ctk.CTkToplevel):
-    def __init__(self, master, *args, **kwargs):
+    def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         # self.geometry("400x300")
         self.title("Розрахунок зарплат")
